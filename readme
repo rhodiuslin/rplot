@@ -1,0 +1,40 @@
+Usage: $ rplot [options] [-[-file|f] <filename>]
+       Plot or summarize the data given by the <filename>.
+Examples:
+    $ rplot -f x.dat -s            # print summary
+    $ rplot -f x.dat -p            # scatterplot
+    $ rplot -f xy.dat -p -l xy     # 2D scatterplot with log-scale on xy-axes
+    $ rplot -f x.dat -b            # historam plot
+    $ rplot -f xy.dat -b grouppdf  # group density plot
+    $ rplot -f xy.dat -r           # print correlation matrix
+    $ rplot -f karate.gml -s -p    # print the network summary and plot the network
+    $ rplot -f karate.gml -p deg   # plot the network degree distribution
+    See ./test.sh for more examples.
+Options: 
+    -h | --help              : Print help information.
+    -v | --verbose           : Print defailted information.
+    -f | --file <filename>   : Set the input file.
+    -d | --delim <character> : Set the delimitor to separate columns in the input file.
+			       (Defalut: comma)
+    -s | --summary [m|more]  : Print summary.
+    -n | --head [nlines]     : Print snippet with the first nlines.
+    -t | --tail [nlines]     : Print snippet with the last nlines.
+    -r | --corr              : Print correlation matrix.
+    -p | --plot [deg|degree] : Show plot/scatterplot.
+                               If the input is a network file, it plots the network 
+			       (or network degree distribution if the argument is specified).
+    -p | --scatterplot       : Show scatterplot.
+			       For one variable, it plots value (y-axis) by index (x-axis).
+			       For two variables, it plots y by x.
+    -b | --bin [[group|facet][count|(pdf|density)]]   : Show histogram or density plot.
+    -c | --cdf [group|facet] : Show CDF plot.
+    -e | --density2d         : Show 2D density plot.
+    -w | --with [p|point|l|line]         : Set plotting shape.
+    -k | --rank [s|sample]<S>[r|rank]<K> : Sample and/or rank up to S (K) points
+    -l | --log [[x|x2|xn][y|y2|yn]]      : Set log-scale on x- and/or y-axis.
+				           (Default: log10 if the argument contains 'x' or 'y')
+    -x | --extract <list>    : Extract columns given by the list, e.g. '1,3', '2-', '2-3'.
+    -o | --opencmd <command> : Set the command to open output image file.
+       | --xlab              : Set x-axis label.
+       | --ylab              : Set y-axis label.
+       | --title             : Set figure title.

@@ -1,0 +1,7 @@
+rplot 0.1
+----------------------------------------
+* generates basic statistical plot or summary of a given data file
+  * statistic functions: summary, correlation
+  * plotting functions: scatterplot, histogram/density plot, CDF plot, 2D density plot
+  * network: plot network, plot degree distribution
+  * sampling, extract columns

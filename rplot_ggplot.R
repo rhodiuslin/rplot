@@ -11,6 +11,7 @@ rplot_init <- function(liblist=c()) {
          panel.grid.major=theme_line(colour = "grey90"),
   			 panel.border=theme_blank())
   if ('MASS' %in% liblist) suppressPackageStartupMessages( require(MASS,quietly=T) )  
+  if ('gplots' %in% liblist) suppressPackageStartupMessages( require(gplots,quietly=T) )  
 }
 
 # take S random samples from the data and generat ranked indices for the top K samples
@@ -245,6 +246,7 @@ kde2dplot <- function(d,                # a 2d density computed by kde2D
   fcol      <- fcol[-nrz,-ncz]
   
   par(mfrow=c(1,2),mar=c(0.5,0.5,0.5,0.5))
+#   if (is.finite(zlim[2])) 
   persp(d,col=fcol,zlim=zlim,theta=theta,phi=phi,zlab=zlab,xlab=xlab,ylab=ylab)
   
   par(mar=c(2,2,2,2))
@@ -286,6 +288,39 @@ rplot_density2d <- function(X,opt) {
   system(sprintf('%s %s',opt$opencmd,opt$tmpimg))  
 }
 
+rplot_hist2d <- function(X,opt) {
+  if (opt$verbose) printf('2D histogram plot\n')
+  rplot_init(liblist=c('gplots'))
+  X <- as.data.frame(X)
+  x <- X$x; y <- X$y
+  xlab <- 'x'; ylab <- 'y'
+
+  if (opt$log!='') {
+    n0 = nrow(X)
+    X <- subset(X,x>0 & y>0)
+    n = nrow(X)
+    printf('remove %d/%d (%.2f) before log-transformation\n',n0-n,n0,(n0-n)/n0)
+    x <- X$x; y <- X$y
+    if (has.str(opt$log,'x')) {
+      if ( grepl('(lnX|xe|xn)', opt$log, ignore.case=T) ) {x <- log(x); xlab <- 'ln(x)'}
+      if ( grepl('(log2X|lg2X|l2x|x2)', opt$log, ignore.case=T) ) {x <- log2(x); xlab <- 'log2(x)'}
+      else {x <- log10(x); xlab <- 'log10(x)'} # (log10X|lg10X|l10x|lx|x10)
+    }
+    if (has.str(opt$log,'y')) {
+      if ( grepl('(lnY|ye|yn)', opt$log, ignore.case=T) ) {y <- log(y); ylab <- 'ln(y)'}
+      if ( grepl('(log2Y|lg2Y|l2y|y2)', opt$log, ignore.case=T) ) {y <- log2(y); ylab <- 'log2(y)'}
+      else {y <- log10(y); ylab <- 'log10(y)'} # (log10Y|lg10Y|l10y|ly|y10)
+    }
+  }
+  
+  png(opt$tmpimg)
+  hist2d(x,y, nbins=10, col = c("white",heat.colors(16)), xlab=xlab, ylab=ylab)
+  rug(x,side=1)
+  rug(y,side=2)  
+  dev.off()
+  system(sprintf('%s %s',opt$opencmd,opt$tmpimg))  
+}
+
 rplot_trend <- function(X,opt) {
   rplot_init()
   X <- as.data.frame(X)
@@ -298,7 +333,7 @@ rplot_trend <- function(X,opt) {
   for (i in 1:length(xbreaks)-1) Y$grp[which(Y$x >= xbreaks[i] & Y$x < xbreaks[i+1])] <- 0.5*(xbreaks[i]+xbreaks[i+1])
   Y$x <- factor(Y$grp)
   Y <- summarySE(Y, measurevar="y", groupvars=c('x'))
-  Y$x <- as.numeric(Y$x)
+  Y$x <- xbreaks[as.numeric(Y$x)]
   # Standard error of the mean
   p <- ggplot(Y, aes(x, y)) + 
     geom_errorbar(aes(ymin=y-se, ymax=y+se), width=.1) +

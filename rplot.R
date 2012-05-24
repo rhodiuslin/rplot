@@ -10,7 +10,7 @@
 # set a prior desired mirror to avoid evoking Tcl/Tk interface
 options(repos='http://r.iq.harvard.edu') # USA
 # options(verbose=F,echo=F) 
-liblist = c('utils','getopt','ggplot2','igraph','MASS')
+liblist = c('utils','getopt','ggplot2','igraph','MASS','gplots')
 
 spath <- dirname(Sys.which('rplot')) # get the path of current script
 source(sprintf('%s/rplot_utils.R',spath))
@@ -33,4 +33,4 @@ source(sprintf('%s/rplot_igraph.R',spath))
 source(sprintf('%s/rplot_main.R',spath))
 
 # args <- commandArgs(TRUE); print(args)
-suppressWarnings(rplot_main())
+suppressWarnings(rplot_main(spath))

@@ -2,9 +2,9 @@
 # Yu-Ru Lin
 # date: May 12, 2012
 
-usage <- function() cat(readLines('readme'),sep='\n')
+usage <- function(spath) cat(readLines(sprintf('%s/readme',spath)),sep='\n')
 
-rplot_main <- function() {
+rplot_main <- function(spath='') {
   # TODO: need a better way to handle the arguments
   #get options, using the spec as defined by the enclosed list.
   #we read the options from the default: commandArgs(TRUE).
@@ -33,11 +33,12 @@ rplot_main <- function() {
     'test','4',0,'logical'
   ));
 #   print(opt)
+  opt$spath <- spath
   #help was asked for.
   if ( !is.null(opt$help) ) {
     #get the script name (only works when invoked with Rscript).
     #self = commandArgs()[1];
-    usage()
+    usage(opt$spath)
     q(status=1);
   }
   if (!is.null(opt$test)) {
@@ -78,7 +79,7 @@ rplot_main <- function() {
 #   print(opt)
   #do some operation based on user input.
   if (!is.null(opt$head) || !is.null(opt$tail)) show_file_snippet_fast(opt) 
-  if (opt$summary!=''
+  else if (opt$summary!=''
       || opt$corr
       || opt$bin!=''
       || opt$cdf!=''
@@ -86,20 +87,24 @@ rplot_main <- function() {
       || opt$plot!=''
       || opt$scatterplot) {
     xo <- load_file(opt)
-  }
-  if (!is.null(xo$X)) {
-    if (opt$summary!='') show_file_summary(xo$X,xo$opt)
-    if (opt$corr) show_correlation(xo$X,xo$opt)
-    if (opt$bin!='') rplot_histogram(xo$X,xo$opt) # plot histogram or pdf
-    else if (opt$cdf!='') rplot_cdf(xo$X,xo$opt) # plot cdf
-    else if (opt$density2d!='') rplot_density2d(xo$X,xo$opt) # plot 2D density (persp + contour)
-    else if (opt$plot=='trend') rplot_trend(xo$X,xo$opt)
-    else if (opt$plot!='' || opt$scatterplot) rplot_scatterplot(xo$X,xo$opt) # scatterplot is the default plotting function    
-  } 
-  else if (!is.null(xo$g)) {
-    if (opt$summary!='') show_graph_summary(xo$g,xo$opt)
-    if (opt$plot=='deg') graph_plot_degree_distribution(xo$g,xo$opt) # scatterplot is the default plotting function    
-    else if (opt$plot!='') graph_plot(xo$g,xo$opt) # scatterplot is the default plotting function    
+    
+    if (!is.null(xo$X)) {
+      if (opt$summary!='') show_file_summary(xo$X,xo$opt)
+      if (opt$corr) show_correlation(xo$X,xo$opt)
+      if (opt$bin!='') rplot_histogram(xo$X,xo$opt) # plot histogram or pdf
+      else if (opt$cdf!='') rplot_cdf(xo$X,xo$opt) # plot cdf
+      else if (opt$density2d=='hist') rplot_hist2d(xo$X,xo$opt) # plot 2D density (persp + contour)
+      else if (opt$density2d!='') rplot_density2d(xo$X,xo$opt) # plot 2D density (persp + contour)
+      else if (opt$plot=='trend') rplot_trend(xo$X,xo$opt)
+      else if (opt$plot!='' || opt$scatterplot) rplot_scatterplot(xo$X,xo$opt) # scatterplot is the default plotting function    
+    } 
+    else if (!is.null(xo$g)) {
+      if (opt$summary!='') show_graph_summary(xo$g,xo$opt)
+      if (opt$plot=='deg') graph_plot_degree_distribution(xo$g,xo$opt) # scatterplot is the default plotting function    
+      else if (opt$plot!='') graph_plot(xo$g,xo$opt) # scatterplot is the default plotting function    
+      
+    }
+    
     
   }
   

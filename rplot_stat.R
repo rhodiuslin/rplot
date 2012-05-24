@@ -81,16 +81,23 @@ load_file <-function(opt) {
   }
   if (opt$extract!='') opt <- extract_fields(opt)
   if (opt$rank!='') opt <- sample_sort_file(opt)
-  X <- read.csv(opt$file, sep=opt$delim, header=guess_header(opt),strip.white=T)
+#   X <- read.csv(opt$file, sep=opt$delim, header=guess_header(opt),strip.white=T)
+  X <- read.csv(opt$file, sep=opt$delim, header=F,strip.white=T)
   colnames(X) <- set_default_colnames(X)
   list(X=X,opt=opt)
 }
 
 show_file_snippet_fast <- function(opt) {
   system(sprintf('wc -l %s',opt$file)) # count the lines in the file; fast but cannot customized file information
-  system(sprintf('head -%d %s',opt$head, opt$file))
+  if (!is.null(opt$head)) {
+    opt$head <- as.numeric(opt$head)
+    system(sprintf('head -%d %s',opt$head, opt$file))
+  }
   cat('...','\n')
-  system(sprintf('tail -%d %s',opt$tail, opt$file))
+  if (!is.null(opt$tail)) {
+    opt$tail <- as.numeric(opt$tail)
+    system(sprintf('tail -%d %s',opt$tail, opt$file))
+  }
 }
 
 show_file_snippet <- function(opt) {

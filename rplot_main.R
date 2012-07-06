@@ -12,7 +12,7 @@ rplot_main <- function(spath='') {
     'verbose', 'v', 2, "integer",
     'help', 'h', 0, "logical",
     'opencmd', 'o', 1, "character",
-    'file', 'f', 1, "character",
+    'file', 'f', 2, "character",
     'delim', 'd', 1, "character",
     'head', 'n', 2, "integer",
     'tail', 't', 2, "integer",
@@ -44,10 +44,17 @@ rplot_main <- function(spath='') {
   if (!is.null(opt$test)) {
     system(sprintf('./test.sh'))
   }
+
+  opt$tmpimg <- 'tmp.png'
+  opt$tmpdat <- 'tmp.dat'
   
   #set some reasonable defaults for the options that are needed,
   #but were not specified.
-#   if ( is.null(opt$file ) ) { opt$file = NULL }
+  if ( is.null(opt$file ) ) {
+    if(isatty(stdin())==T) { cat('error: rplot requires stdin or an input file.\n'); q(status=1) }
+    write.table(read.table(file("stdin"), header=F),opt$tmpdat, row.names=F,col.names=F);
+    opt$file <- opt$tmpdat
+  }
   if ( is.null(opt$verbose ) ) { opt$verbose = FALSE }
   if ( is.null(opt$delim ) ) { opt$delim = guess_delim(opt) }
   if ( is.null(opt$opencmd ) ) { 
@@ -70,8 +77,7 @@ rplot_main <- function(spath='') {
   if ( is.null(opt$cdf ) ) { opt$cdf = '' }
   if ( is.null(opt$density2d ) ) { opt$density2d = '' }
   if ( is.null(opt$extract ) ) { opt$extract = '' }
-  opt$tmpimg <- 'tmp.png'
-  opt$tmpdat <- 'tmp.dat'
+
   opt$bins <- 20
   
   #print some progress messages to stderr, if requested.

@@ -67,6 +67,16 @@ rplot_with <- function(p,opt) {
   }
   p
 }
+rplot_with <- function(p,opt) {
+  if ( grepl('(p|point)', opt$with) ) p <- p + geom_point()
+  else if ( grepl('(o|circle)', opt$with) ) p <- p + geom_point(shape=1)
+  else if ( grepl('(sq|square)', opt$with) ) p <- p + geom_point(shape=0)
+  else if ( grepl('(tri|triangle)', opt$with) ) p <- p + geom_point(shape=2)
+  if ( grepl('(l|line)', opt$with) ) p <- p + geom_line()   
+  else if ( grepl('dash', opt$with) ) p <- p + geom_line(linetype='dashed')   
+  else if ( grepl('dot', opt$with) ) p <- p + geom_line(linetype='dotted')   
+  p
+}  
 
 # plot with log-scale on xy
 rplot_log <- function(p,opt) {
@@ -102,16 +112,6 @@ rplot_output <- function(p,opt) {
   system(sprintf('%s %s',opt$opencmd,opt$tmpimg))  
 }
 
-rplot_with <- function(p,opt) {
-  if ( grepl('(p|point)', opt$with) ) p <- p + geom_point()
-  else if ( grepl('(o|circle)', opt$with) ) p <- p + geom_point(shape=1)
-  else if ( grepl('(sq|square)', opt$with) ) p <- p + geom_point(shape=0)
-  else if ( grepl('(tri|triangle)', opt$with) ) p <- p + geom_point(shape=2)
-  if ( grepl('(l|line)', opt$with) ) p <- p + geom_line()   
-  else if ( grepl('dash', opt$with) ) p <- p + geom_line(linetype='dashed')   
-  else if ( grepl('dot', opt$with) ) p <- p + geom_line(linetype='dotted')   
-  p
-}  
 
 rplot_scatterplot <- function(X,opt) {
   if (opt$verbose) printf('scatterplot\n')
